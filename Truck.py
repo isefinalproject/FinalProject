@@ -8,6 +8,7 @@ class Truck:
     
     def __init__(self, _id, initialLocation ):
         self.id = _id
+        self.location = initialLocation
         
         
         
@@ -15,15 +16,16 @@ class Truck:
     Current location of a truck should be either at Node or on a "directed" edge
     together with the information how far on this edge the truck is.
     """    
-    def updateLocation(self):
-        pass 
+    def updateLocation(self, currLocation):
+        self.location = currLocation
+         
     
     """
          it should return the edge and also how far he is on this edge, e.g. [A,C],[5,30] 
          if he is traveling 5 minutes on an edge A->C which takes 30 minutes to travel 
     """
     def getCurrentLocation(self):
-        pass
+        return self.location
     
     
     """
@@ -36,6 +38,6 @@ class Truck:
     def getTotalTravelHistory(self):
         history=[]
         
-        
-        
         return history
+    
+    

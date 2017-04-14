@@ -4,6 +4,10 @@ Created on Apr 14, 2017
 @author: Trent Insull
 '''
 
+from coinor.gimpy import Graph 
+
+from Truck import Truck
+
 class Scheduler:
     
     
@@ -13,7 +17,9 @@ class Scheduler:
     Trucks - key=ID, value=Initial Location of a truck
     """
     def __init__(self, V, E, Trucks):
-        
+        self.V = V
+        self.E = E
+        self.Trucks = Trucks
         
         
         
@@ -21,11 +27,17 @@ class Scheduler:
     
     
     def processNewOrders(self, newOrders):
+        #from A-> B
+        location = [A,B]
+        
+        
         pass 
     
     
     
-    def updateLocationOfTrucks(self):
+    def updateLocationOfTrucks(self, V, E, Truck):
+        for truck in self.Trucks:
+            truck.updateLocation(location);
         pass
     
     

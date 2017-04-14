@@ -60,3 +60,5 @@ for orders in xrange(16):
         
         
 myScheduler.saveTravelHistoryOfAllTrucks() 
+
+
