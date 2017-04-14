@@ -1,25 +1,20 @@
-'''
-Created on Apr 14, 2017
+from priority_queue import PriorityQueue
 
-@author: Trent Insull
-'''
 class Truck:
     
     
-    def __init__(self, _id, initialLocation ):
+    def __init__(self, _id, initialLocation):
         self.id = _id
         self.location = initialLocation
-        
+        self.queue = PriorityQueue()
         
         
     """
     Current location of a truck should be either at Node or on a "directed" edge
     together with the information how far on this edge the truck is.
     """    
-    def updateLocation(self, currLocation):
-        self.location = currLocation
-         
-    
+    def updateLocation(self, location):
+        self.location = location
     """
          it should return the edge and also how far he is on this edge, e.g. [A,C],[5,30] 
          if he is traveling 5 minutes on an edge A->C which takes 30 minutes to travel 
@@ -37,7 +32,7 @@ class Truck:
     """
     def getTotalTravelHistory(self):
         history=[]
-        
         return history
     
-    
+    def updateQueue(self, queue):
+        self.queue += queue

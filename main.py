@@ -1,8 +1,3 @@
-'''
-Created on Apr 14, 2017
-
-@author: Trent Insull
-'''
 from Scheduler import Scheduler
 from numpy import ceil
 import random 
@@ -23,9 +18,9 @@ E={}
 f = open("SF.cedge.txt",'rU')
 for line in f:
     data = line.split()
-    if data[0]!="":
+    if data[0] != "":
         if int(data[1]) in V and int(data[2]) in V:
-            E[ ( min(int(data[1]) , int(data[2])) ,max(int(data[1]) , int(data[2]))   )]= ceil(float(data[3])/5) 
+            E[(min(int(data[1]),int(data[2])),max(int(data[1]),int(data[2])))] = ceil(float(data[3])/5) 
 f.close()
 
 random.seed(1)
@@ -51,7 +46,7 @@ for orders in xrange(16):
     for j in xrange(7):
         fromV = random.randint(0,len(VList))
         toV = random.randint(0,len(VList))
-        newOrders.append( (fromV, toV) )
+        newOrders.append([fromV, toV])
         
     myScheduler.processNewOrders(newOrders)
 
@@ -59,6 +54,4 @@ for orders in xrange(16):
         myScheduler.updateLocationOfTrucks()
         
         
-myScheduler.saveTravelHistoryOfAllTrucks() 
-
-
+myScheduler.saveTravelHistoryOfAllTrucks()

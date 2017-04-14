@@ -1,12 +1,4 @@
-'''
-Created on Apr 14, 2017
-
-@author: Trent Insull
-'''
-
-from coinor.gimpy import Graph 
-
-from Truck import Truck
+from coinor.gimpy import Graph
 
 class Scheduler:
     
@@ -17,29 +9,37 @@ class Scheduler:
     Trucks - key=ID, value=Initial Location of a truck
     """
     def __init__(self, V, E, Trucks):
-        self.V = V
+        self.V =  V
         self.E = E
         self.Trucks = Trucks
-        
-        
-        
         pass
-    
     
     def processNewOrders(self, newOrders):
-        #from A-> B
-        location = [A,B]
-        
-        
-        pass 
+        trucknum = 0
+        for order in newOrders:
+            self.updatequeue(self.paths(self.Trucks[trucknum],newOrders[order][0]))
+            self.updatequeue(self.paths(newOrders[order][0], newOrders[order][1]))
+            trucknum += 1
     
     
     
-    def updateLocationOfTrucks(self, V, E, Truck):
+    def updateLocationOfTrucks(self):
         for truck in self.Trucks:
-            truck.updateLocation(location);
-        pass
+            truck.updateLocation(self.Trucks[truck])
     
+    
+    def paths(self, first, second, path = []):
+        path = path + [first]
+        if first == second:
+            return path
+        shortest =  []
+        for node in self.get_neighbors(first):
+            if node not in path:
+                newpath = self.paths(node,second, path)
+                if newpath:
+                    if not shortest or len(newpath)<len(shortest):
+                        shortest = newpath
+        return shortest
     
     """
     for each truck create a file  history_truckId.log
@@ -49,3 +49,5 @@ class Scheduler:
         
         
         pass
+    
+    
