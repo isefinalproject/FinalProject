@@ -26,13 +26,15 @@ f.close()
 random.seed(1)
 Trucks={}
 truckId = 0
+#for each node in set of vertices
 for key in V:
     if random.random()<0.1:
         r = random.randint(15,40)
         for tmp in xrange(r):
+            #truckID index is equal to its current location, in this instance its initial vertex
             Trucks[truckId] = key 
             truckId=truckId+1
-            
+#schedule trucks            
 myScheduler = Scheduler(V, E, Trucks)
 
 VList = V.keys()

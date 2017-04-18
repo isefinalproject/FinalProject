@@ -1,28 +1,40 @@
-from priority_queue import PriorityQueue
+'''
+Created on Apr 14, 2017
 
+@author: Trent Insull
+'''
 class Truck:
     
     
-    def __init__(self, _id, initialLocation):
+    def __init__(self, _id, initialLocation ):
         self.id = _id
         self.location = initialLocation
-        self.queue = PriorityQueue()
+        #set initial history array for each truck
+        self.history = []
+        
         
         
     """
     Current location of a truck should be either at Node or on a "directed" edge
     together with the information how far on this edge the truck is.
     """    
-    def updateLocation(self, location):
-        self.location = location
+    def updateLocation(self, currLocation):
+        self.location = currLocation
+         
+    
     """
          it should return the edge and also how far he is on this edge, e.g. [A,C],[5,30] 
          if he is traveling 5 minutes on an edge A->C which takes 30 minutes to travel 
     """
     def getCurrentLocation(self):
         return self.location
-    
-    
+    """
+        Method to add an event to the history log
+    """
+    def updateHistory(self, input):
+        self.history.append(input)
+        
+        
     """
     This should return total travel history, e.g.
     A,C,30/30,P20;P94;P101    # this means he moved from A to C which was 30 minutes out of 30 minutes, he picked up 3 packages
@@ -31,8 +43,8 @@ class Truck:
     C,E,50/50,D33;D20    # then he went to E and drop package 33 and 20
     """
     def getTotalTravelHistory(self):
-        history=[]
-        return history
+        
+        
+        return self.history
     
-    def updateQueue(self, queue):
-        self.queue += queue
+    
