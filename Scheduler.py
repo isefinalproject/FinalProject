@@ -12,15 +12,41 @@ class Scheduler:
         self.V =  V
         self.E = E
         self.Trucks = Trucks
+        #get paths from each node to each other node
+        self.validity, self.distance, self.nextn = self.paths()
         
     
     def processNewOrders(self, newOrders):
+        """ OLD CODE
         trucknum = 0
         #for each order in incoming orders
         for order in newOrders:
             self.updatequeue(self.paths(self.Trucks[trucknum],newOrders[order][0]))
             self.updatequeue(self.paths(newOrders[order][0], newOrders[order][1]))
             trucknum += 1
+        """
+        
+        #for each new order
+        for order in newOrders:
+            #get start node
+            startNode = newOrders[order][0]
+            #get end node
+            endNode = newOrders[order][1]
+            ###FIND TRUCK CLOSEST TO START NODE
+            holderDistance = 1000000000
+            for truck in self.Trucks:
+                currLocation = truck.getCurrentLocation()
+                if self.distance[(currLocation,startNode)] < holderDistance:
+                    holderDistance = self.distance[(currLocation,startNode)]
+                    truckToBeUsed = truck
+            ###ASSIGN THE TRUCK THE ROUTE FROM ITS CURRENT LOCATION TO START NODE TO END NDOE
+            
+            ###UPDATE TRUCK HISTORY
+            
+            ###UPDATE LOCATIONS
+                
+            
+            
             
         """
         Psuedo code for this section
@@ -42,7 +68,7 @@ class Scheduler:
     """
     use gimpy provided solutions as stated in class
     """
-    def paths(self, first, second, path = []):
+    def paths(self, first = None, second = None, path = []):
         
         """
         OLD CODE
@@ -59,8 +85,14 @@ class Scheduler:
                         shortest = newpath
         return shortest
         """
+        #calls floyd warshall algo on graph, retrieves true/false if graph contains negative cycle
+        #distance is a dictionary of shortest distances between nodes
+        #nextn is dictionary that helps retrieve shortest path between nodes
+        return validity, distance, nextn = Graph.floyd_warshall()
+        #rturn nextn?
+        
         #call gimpy search method
-        return Graph.search(first, second, algo = 'dijkstra')
+        #return Graph.search(first, second, algo = 'dijkstra')
     
     """
     for each truck create a file  history_truckId.log
