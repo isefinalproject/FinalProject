@@ -3,14 +3,17 @@ Created on Apr 14, 2017
 
 @author: Trent Insull
 '''
+
+from Queue import Queue
 class Truck:
     
     
     def __init__(self, _id, initialLocation ):
         self.id = _id
-        self.location = initialLocation
+        self.location = [initialLocation, None, 0,0]
         #set initial history array for each truck
         self.history = []
+        self.queue = Queue()
         
         
         
@@ -33,7 +36,8 @@ class Truck:
     """
     def updateHistory(self, input):
         self.history.append(input)
-        
+     
+    def updatequeue   
         
     """
     This should return total travel history, e.g.
@@ -46,5 +50,7 @@ class Truck:
         
         
         return self.history
+    
+    
     
     

@@ -25,7 +25,6 @@ class Scheduler:
             self.updatequeue(self.paths(newOrders[order][0], newOrders[order][1]))
             trucknum += 1
         """
-        
         #for each new order
         for order in newOrders:
             #get start node
@@ -36,15 +35,21 @@ class Scheduler:
             holderDistance = 1000000000
             for truck in self.Trucks:
                 currLocation = truck.getCurrentLocation()
-                if self.distance[(currLocation,startNode)] < holderDistance:
-                    holderDistance = self.distance[(currLocation,startNode)]
-                    truckToBeUsed = truck
+                #if current on a node
+                if currLocation[1] == None:
+                    if self.distance[(currLocation,startNode)] < holderDistance:
+                        holderDistance = self.distance[(currLocation,startNode)]
+                        truckToBeUsed = truck
+                #else if on an arc
+                else:
+                    #COMPUTE DISTANCE
+                    truckToBeUsed = truck 
             ###ASSIGN THE TRUCK THE ROUTE FROM ITS CURRENT LOCATION TO START NODE TO END NDOE
-            
+            truckToBeUsed.queue.append([order[0],order[1],0,self.distance[(order[0],order[1])]])
             ###UPDATE TRUCK HISTORY
             
             ###UPDATE LOCATIONS
-                
+            
             
             
             
@@ -88,7 +93,8 @@ class Scheduler:
         #calls floyd warshall algo on graph, retrieves true/false if graph contains negative cycle
         #distance is a dictionary of shortest distances between nodes
         #nextn is dictionary that helps retrieve shortest path between nodes
-        return validity, distance, nextn = Graph.floyd_warshall()
+        validity, distance, nextn = Graph.floyd_warshall()
+        return validity, distance, nextn
         #rturn nextn?
         
         #call gimpy search method
