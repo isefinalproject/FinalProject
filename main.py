@@ -18,23 +18,21 @@ E={}
 f = open("SF.cedge.txt",'rU')
 for line in f:
     data = line.split()
-    if data[0] != "":
+    if data[0]!="":
         if int(data[1]) in V and int(data[2]) in V:
-            E[(min(int(data[1]),int(data[2])),max(int(data[1]),int(data[2])))] = ceil(float(data[3])/5) 
+            E[ ( min(int(data[1]) , int(data[2])) ,max(int(data[1]) , int(data[2]))   )]= ceil(float(data[3])/5) 
 f.close()
 
 random.seed(1)
 Trucks={}
 truckId = 0
-#for each node in set of vertices
 for key in V:
     if random.random()<0.1:
         r = random.randint(15,40)
         for tmp in xrange(r):
-            #truckID index is equal to its current location, in this instance its initial vertex
             Trucks[truckId] = key 
             truckId=truckId+1
-#schedule trucks            
+            
 myScheduler = Scheduler(V, E, Trucks)
 
 VList = V.keys()
@@ -46,14 +44,31 @@ for orders in xrange(16):
     # create orders
     newOrders=[]
     for j in xrange(7):
-        fromV = random.randint(0,len(VList))
-        toV = random.randint(0,len(VList))
-        newOrders.append([fromV, toV])
+        fromV = random.randint(0,len(VList)-1)
+        toV = random.randint(0,len(VList)-1)
+        newOrders.append( (VList[fromV], VList[toV]) )
+
         
     myScheduler.processNewOrders(newOrders)
-
+    for order in newOrders:
+        print order
     for t in xrange(30):
         myScheduler.updateLocationOfTrucks()
+
+for t in xrange(1200):
+    myScheduler.updateLocationOfTrucks()
+
+     
         
+myScheduler.saveTravelHistoryOfAllTrucks()    
         
-myScheduler.saveTravelHistoryOfAllTrucks()
+myScheduler.printHistoriesOfAllTrucks()   
+    
+    
+    
+    
+    
+    
+
+
+

@@ -1,7 +1,7 @@
 '''
-Created on Mar 31, 2017
+Created on Apr 19, 2017
 
-@author: Trent
+@author: Trent Insull
 '''
 from platform import node
 '''
@@ -53,4 +53,3 @@ class PriorityQueue(object):
         self.priorityQueue[key] = priority
     
     def remove(self, key):
-        del self.priorityQueue[key]
