@@ -45,15 +45,15 @@ class Scheduler():
         self.V =  V
         self.E = E
         #CREATE NETWROK
-        self.network = Network()
+        self.network = Graph(type = DIRECTED_GRAPH)
         #for nodes in the list of vertices add the node to the netwrok
         for node in self.V:
-            self.network.add_entity(node)
+            self.network.add_node(node, label = None)
         #for each edge in edges    
         for edge in self.E:
             #add an edge both ways since graph is directed    
-            self.network.add_connection(edge[0],edge[1])
-            self.network.add_connection(edge[1],edge[0])
+            self.network.add_edge(edge[0],edge[1])
+            self.network.add_edge(edge[1],edge[0])
             #add costs to both edges
             self.network.set_edge_attr(edge[0],edge[1], 'cost', self.E[edge])
             self.network.set_edge_attr(edge[1],edge[0], 'cost', self.E[edge])
@@ -78,58 +78,61 @@ class Scheduler():
             pickUpPoint = order[0]
             #get end node
             dropOffPoint = order[1]
-            """
-            #DOES NOT FIND CLOSEST TRUCK, JUST ASSIGN TO NEXT TRUCK IN LIST
-            currLocation = self.Trucks[truckNum].getCurrentLocation()
-            self.Trucks[truckNum].location = [currLocation[0],startNode,0,self.distance[(currLocation[0],startNode)]]
-            self.Trucks[truckNum].queue.put([startNode,endNode,0,self.distance[(startNode,endNode)]])
-            #self.Trucks[truckNum].queue.put([startNode,endNode,0,self.distance[(startNode,endNode)]])
-            truckNum += 1
-            """
+            if self.distance[(pickUpPoint,dropOffPoint)] == 'infinity' or self.distance[(pickUpPoint,dropOffPoint)] == 0:
+                pass
+            else:
+                """
+                #DOES NOT FIND CLOSEST TRUCK, JUST ASSIGN TO NEXT TRUCK IN LIST
+                currLocation = self.Trucks[truckNum].getCurrentLocation()
+                self.Trucks[truckNum].location = [currLocation[0],pickUpPoint,0,self.distance[(currLocation[0],pickUpPoint)]]
+                self.Trucks[truckNum].queue.push([pickUpPoint,dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
+                #self.Trucks[truckNum].queue.put([startNode,endNode,0,self.distance[(startNode,endNode)]])
+                if truckNum < 133:
+                    truckNum += 1
+                
+                """
+                truckToBeUsed = self.Trucks[truckNum]
+                #SAVE FOR LATER
+                ###FIND TRUCK CLOSEST TO START NODE
+                holderDistance = 1000000000
+                for truck in self.Trucks.values():
+                    currLocation = truck.getCurrentLocation()
+                    #if currently on a node (not in the middle of a delivery)
+                    if currLocation[1] == None:
+                        #if distance from trucks current location to start node is less than holder distance
+                        if self.distance[(currLocation[0],pickUpPoint)] < holderDistance:
+                            #reset holder distance to distance from current node to pickup point
+                            holderDistance = self.distance[(currLocation[0],pickUpPoint)]
+                            #save what truck this is
+                            truckToBeUsed = truck
+                #set truck into motion from its current location to the pickup node
+                truckToBeUsed.location = [currLocation[0],pickUpPoint,0,self.distance[(currLocation[0],pickUpPoint)]]
+                #queue up route from pickup node to dropoff node
             
-            truckToBeUsed = self.Trucks[truckNum]
-            #SAVE FOR LATER
-            ###FIND TRUCK CLOSEST TO START NODE
-            holderDistance = 1000000000
-            for truck in self.Trucks.values():
-                currLocation = truck.getCurrentLocation()
-                #if currently on a node (not in the middle of a delivery)
-                if currLocation[1] == None:
-                    #if distance from trucks current location to start node is less than holder distance
-                    if self.distance[(currLocation[0],pickUpPoint)] < holderDistance:
-                        #reset holder distance to distance from current node to pickup point
-                        holderDistance = self.distance[(currLocation[0],pickUpPoint)]
-                        #save what truck this is
-                        truckToBeUsed = truck
-            #set truck into motion from its current location to the pickup node
-            truckToBeUsed.location = [currLocation[0],pickUpPoint,0,self.distance[(currLocation[0],pickUpPoint)]]
-            #queue up route from pickup node to dropoff node
-            truckToBeUsed.queue.push([pickUpPoint,dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
-            truckNum += 1
+                #truckToBeUsed.queue.push([pickUpPoint,dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
+                
+            
 
-            """
-            #SAVE FOR LATER WHEN KEEPING TRACK ON EDGE TO EDGE
-            #create array of nodes on path from start to end
-            pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, startNode, endNode)
-            # for each two sets of nodes on the path
-            for i in pathForTruck:
-                #append that node, the next node, 0 total distance travel, and distance between nodesto be travelled on
-                if i < (len(pathForTruck)-1):
-                    truckToBeUsed.queue.put([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
-            """
-
+                
+                #SAVE FOR LATER WHEN KEEPING TRACK ON EDGE TO EDGE
+                #create array of nodes on path from start to end
+                pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
+                print pathForTruck
+                # for each two sets of nodes on the path
+                for i in pathForTruck:
+                    #append that node, the next node, 0 total distance travel, and distance between nodesto be travelled on
+                    if i < (len(pathForTruck)):
+                        truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
+                        #truckToBeUsed.updateHistory([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
+                truckNum += 1
+                
         
             
             ###UPDATE LOCATIONS
             #truckToBeUsed.location = [startNode, pathForTruck[1],0, self.distance[startNode, pathForTruck[1]]]
-        """
-        Psuedo code for this section
-        For each order in new orders:
-            Find the truck that can drive to the pickup point to pickup package and then dropoff in shortest distance
-            Assign that truck the order
-            Update trucks history accordingly
-            update that trucks location
-        """
+            
+            
+
     
     
     
@@ -162,8 +165,9 @@ class Scheduler():
     
     def printHistoriesOfAllTrucks(self):
         totalMilesDriven = 0
+        
         for truck in self.Trucks.values():
             print truck.getTotalTravelHistory()
-            for i in truck.getTotalTravelHistory():
-                totalMilesDriven += i[3]
+            #for i in truck.getTotalTravelHistory():
+                #totalMilesDriven += i[3]
         print "Your fleet drove a total of " + str(totalMilesDriven) + " miles"
