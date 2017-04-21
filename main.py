@@ -50,10 +50,9 @@ for orders in xrange(16):
 
         
     myScheduler.processNewOrders(newOrders)
-    for order in newOrders:
-        print order
-    for t in xrange(30):
-        myScheduler.updateLocationOfTrucks()
+
+    #for t in xrange(30):
+       # myScheduler.updateLocationOfTrucks()
 
 for t in xrange(1200):
     myScheduler.updateLocationOfTrucks()

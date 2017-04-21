@@ -9,7 +9,10 @@ class MyQueue():
         self.queue = []
         
     def isEmpty(self):
-        return self.queue == []
+        if len(self.queue) == 0:
+            return True
+        else:
+            return False
     
     
     def push(self, item):

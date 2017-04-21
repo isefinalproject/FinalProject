@@ -25,26 +25,35 @@ class Truck:
     def updateLocation(self):
         #if truck is on an arc, increase how far it has gone
         if self.location[2] < self.location[3]:
+            #self.updateHistory('move one unit')
             self.location[2] += 1
         #if we have reached the node we are on our way to and truck has been driving
-        elif self.location[2] == self.location[3] and self.location[3] != 0:
+        if self.location[2] == self.location[3] and self.location[3] != 0:
             #update history
             self.updateHistory(self.location)
+            
             #if queue is not empty
-            if self.queue.isEmpty() == False:
-                self.location = self.queue.pop()
+            if not self.queue.isEmpty():
+                self.updateHistory('GOING TO NEW NODE')
+                i,j, distTravelled, distToGo = self.queue.pop()
+                self.location = [i,j,distTravelled,distToGo]
+                
+                
+                
+            
             #else if queue is empty, set truck to rest in its current node
-            if self.location[1] != None:
+            if self.queue.isEmpty() == True:
+                self.updateHistory("STAYING AT NODE")
                 self.location = [self.location[1], None, 0, 0]
-        #if queue is empty stay in current location
-        else:
-            self.location = self.location
+                self.updateHistory(self.location)
+            
+            
         
         
          
     
         """
-    it should return the edge and also how far he is on this edge, e.g. [A,C],[5,30] 
+    it should return the edge and also how far it is on this edge, e.g. [A,C],[5,30] 
          if he is traveling 5 minutes on an edge A->C which takes 30 minutes to travel 
     """
     def getCurrentLocation(self):

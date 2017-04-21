@@ -7,6 +7,14 @@ from coinor.gimpy import Graph
 from coinor.gimpy import DIRECTED_GRAPH as DIRECTED_GRAPH
 from Truck import Truck
 
+
+"""
+TO DO:
+FILTER PATH LIST TO INCLUDE EACH NODE ONCE INSTEAD OF 3 TIMES
+DOUBLE CHECK TRUCKS ARE GETTING ROUTED CORRECTLY
+VISUALIZE TRUCKS MOVING
+IMPLEMENT HEURISTIC?
+"""
 class Network(Graph):
     
     def __init__(self):
@@ -119,11 +127,14 @@ class Scheduler():
                 pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
                 print pathForTruck
                 # for each two sets of nodes on the path
-                for i in pathForTruck:
+                for i in range(0, len(pathForTruck)-1):
                     #append that node, the next node, 0 total distance travel, and distance between nodesto be travelled on
-                    if i < (len(pathForTruck)):
-                        truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
-                        #truckToBeUsed.updateHistory([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
+                    #if i < (len(pathForTruck)):
+                    truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
+                    #print [pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]]
+                    
+                    
+                
                 truckNum += 1
                 
         
