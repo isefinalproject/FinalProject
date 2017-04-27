@@ -28,7 +28,7 @@ Trucks={}
 truckId = 0
 for key in V:
     if random.random()<0.1:
-        r = random.randint(1,2)
+        r = random.randint(15,20)
         for tmp in xrange(r):
             Trucks[truckId] = key 
             truckId=truckId+1

@@ -78,8 +78,7 @@ class Scheduler():
         
     
     def processNewOrders(self, newOrders):
-        #for each new order
-        truckNum = 0
+
         
         for order in newOrders:
             
@@ -94,6 +93,7 @@ class Scheduler():
                 pickUpPoint = order[0]
                 #get end node
                 dropOffPoint = order[1]
+                pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
                 """
                 #DOES NOT FIND CLOSEST TRUCK, JUST ASSIGN TO NEXT TRUCK IN LIST
                 currLocation = self.Trucks[truckNum].getCurrentLocation()
@@ -104,8 +104,7 @@ class Scheduler():
                     truckNum += 1
                 
                 """
-                #truckToBeUsed = self.Trucks[0]
-                #SAVE FOR LATER
+                
                 ###FIND TRUCK CLOSEST TO START NODE
                 
                 for truck in self.Trucks.values():
@@ -113,7 +112,7 @@ class Scheduler():
                     currLocation = truck.getCurrentLocation()
                     #if currently on a node (not in the middle of a delivery)
                     if truck.isTravelling() == False:
-                        truckToBeUsed = truck
+                        #truckToBeUsed = truck
                         #if distance from trucks current location to start node is less than holder distance
                         if self.distance[(currLocation[0],pickUpPoint)] < holderDistance:
                             #reset holder distance to distance from current node to pickup point
@@ -125,17 +124,18 @@ class Scheduler():
                 if truckToBeUsed.isTravelling() == False and currentPoint[1] == None:
                     
                     startLocation = currentPoint[0]
+                    truckToBeUsed.updateHistory("ROUTE TO PICKUP")
                     truckToBeUsed.location = [startLocation,pickUpPoint,0,self.distance[(startLocation,pickUpPoint)]]
                     truckToBeUsed.queue.push([pickUpPoint, dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
+                    
+                    #create array of nodes on path from start to end
+                    #pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
+                    #for i in range(0, len(pathForTruck)-1):
+                        #truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
+                     
+                
                     truckToBeUsed.travelling = True
-                    
-                    
-                    
 
-                
-            
-
-                
                 #SAVE FOR LATER WHEN KEEPING TRACK ON EDGE TO EDGE
                 #create array of nodes on path from start to end
                 #pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
