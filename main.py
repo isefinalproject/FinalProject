@@ -28,7 +28,7 @@ Trucks={}
 truckId = 0
 for key in V:
     if random.random()<0.1:
-        r = random.randint(15,40)
+        r = random.randint(1,2)
         for tmp in xrange(r):
             Trucks[truckId] = key 
             truckId=truckId+1
@@ -47,14 +47,15 @@ for orders in xrange(16):
         fromV = random.randint(0,len(VList)-1)
         toV = random.randint(0,len(VList)-1)
         newOrders.append( (VList[fromV], VList[toV]) )
+        print (VList[fromV], VList[toV])
 
         
     myScheduler.processNewOrders(newOrders)
 
-    #for t in xrange(30):
-       # myScheduler.updateLocationOfTrucks()
+    for t in xrange(30):
+        myScheduler.updateLocationOfTrucks()
 
-for t in xrange(1200):
+for t in xrange(12000):
     myScheduler.updateLocationOfTrucks()
 
      

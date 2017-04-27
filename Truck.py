@@ -10,6 +10,7 @@ class Truck:
     def __init__(self, _id, initialLocation):
         self.id = _id
         self.location = [initialLocation, None, 0,0]
+        self.travelling = False
         #set initial history array for each truck
         self.history = [[initialLocation, None, 0,0]]
         #queue to handle big order
@@ -27,30 +28,64 @@ class Truck:
         if self.location[2] < self.location[3]:
             #self.updateHistory('move one unit')
             self.location[2] += 1
+            if self.location[2] == self.location[3]:
+                self.updateHistory(self.location)
+                #if queue is not empty
+                if not self.queue.isEmpty():
+                #get new data
+                    i,j, distTravelled, distToGo = self.queue.pop()
+                    self.updateHistory([i,j,distTravelled,distToGo])
+                    #set location
+                    self.location = [i,j,distTravelled,distToGo]
+                    #self.updateHistory(self.location)
+                    self.updateHistory('GOING TO NEW NODE')
+                    
+                #else if queue is empty, set truck to rest in its current node
+                if self.queue.isEmpty():
+                    if self.location[1] != None:
+                        #self.updateHistory(self.location)
+                        
+                        self.updateHistory("STAYING AT NODE")
+                        self.location = [self.location[1], None, 0, 0]
+                        self.travelling = False
+                        self.updateHistory(self.location)
+        else:
+            self.location = self.location
+        """      
         #if we have reached the node we are on our way to and truck has been driving
-        if self.location[2] == self.location[3] and self.location[3] != 0:
+        if self.location[2] == self.location[3] and self.location[2] != 0:
             #update history
-            self.updateHistory(self.location)
+            
             
             #if queue is not empty
             if not self.queue.isEmpty():
-                self.updateHistory('GOING TO NEW NODE')
+                #get new data
                 i,j, distTravelled, distToGo = self.queue.pop()
+                #set location
                 self.location = [i,j,distTravelled,distToGo]
+                #self.updateHistory(self.location)
+                self.updateHistory('GOING TO NEW NODE')
+   
+                
+                
+                
                 
                 
                 
             
             #else if queue is empty, set truck to rest in its current node
-            if self.queue.isEmpty() == True:
-                self.updateHistory("STAYING AT NODE")
-                self.location = [self.location[1], None, 0, 0]
-                self.updateHistory(self.location)
+            if self.queue.isEmpty():
+                if self.location[1] != None:
+                    self.updateHistory(self.location)
+                    self.travelling = False
+                    self.updateHistory("STAYING AT NODE")
+                    self.location = [self.location[1], None, 0, 0]
+                    self.updateHistory(self.location)
             
             
         
         
-         
+         """
     
         """
     it should return the edge and also how far it is on this edge, e.g. [A,C],[5,30] 
@@ -64,7 +99,9 @@ class Truck:
     def updateHistory(self, input):
         self.history.append(input)
      
-
+     
+    def isTravelling(self):
+        return self.travelling
         
     """
     This should return total travel history, e.g.

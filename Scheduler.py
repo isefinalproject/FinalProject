@@ -6,6 +6,7 @@ Created on Apr 19, 2017
 from coinor.gimpy import Graph
 from coinor.gimpy import DIRECTED_GRAPH as DIRECTED_GRAPH
 from Truck import Truck
+from Tkconstants import CURRENT
 
 
 """
@@ -89,6 +90,10 @@ class Scheduler():
             if self.distance[(pickUpPoint,dropOffPoint)] == 'infinity' or self.distance[(pickUpPoint,dropOffPoint)] == 0:
                 pass
             else:
+                #get start node
+                pickUpPoint = order[0]
+                #get end node
+                dropOffPoint = order[1]
                 """
                 #DOES NOT FIND CLOSEST TRUCK, JUST ASSIGN TO NEXT TRUCK IN LIST
                 currLocation = self.Trucks[truckNum].getCurrentLocation()
@@ -99,14 +104,16 @@ class Scheduler():
                     truckNum += 1
                 
                 """
-                truckToBeUsed = self.Trucks[truckNum]
+                #truckToBeUsed = self.Trucks[0]
                 #SAVE FOR LATER
                 ###FIND TRUCK CLOSEST TO START NODE
-                holderDistance = 1000000000
+                
                 for truck in self.Trucks.values():
+                    holderDistance = 1000000000
                     currLocation = truck.getCurrentLocation()
                     #if currently on a node (not in the middle of a delivery)
-                    if currLocation[1] == None:
+                    if truck.isTravelling() == False:
+                        truckToBeUsed = truck
                         #if distance from trucks current location to start node is less than holder distance
                         if self.distance[(currLocation[0],pickUpPoint)] < holderDistance:
                             #reset holder distance to distance from current node to pickup point
@@ -114,34 +121,40 @@ class Scheduler():
                             #save what truck this is
                             truckToBeUsed = truck
                 #set truck into motion from its current location to the pickup node
-                truckToBeUsed.location = [currLocation[0],pickUpPoint,0,self.distance[(currLocation[0],pickUpPoint)]]
-                #queue up route from pickup node to dropoff node
-            
-                #truckToBeUsed.queue.push([pickUpPoint,dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
+                currentPoint = truckToBeUsed.getCurrentLocation()
+                if truckToBeUsed.isTravelling() == False and currentPoint[1] == None:
+                    
+                    startLocation = currentPoint[0]
+                    truckToBeUsed.location = [startLocation,pickUpPoint,0,self.distance[(startLocation,pickUpPoint)]]
+                    truckToBeUsed.queue.push([pickUpPoint, dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
+                    truckToBeUsed.travelling = True
+                    
+                    
+                    
+
                 
             
 
                 
                 #SAVE FOR LATER WHEN KEEPING TRACK ON EDGE TO EDGE
                 #create array of nodes on path from start to end
-                pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
-                print pathForTruck
+                #pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
+                #print pathForTruck
                 # for each two sets of nodes on the path
+                #truckToBeUsed.queue.push([pathForTruck[0],pathForTruck[len(pathForTruck)-1],0,self.distance[pathForTruck[0],pathForTruck[len(pathForTruck)-1]]])
+                """
                 for i in range(0, len(pathForTruck)-1):
                     #append that node, the next node, 0 total distance travel, and distance between nodesto be travelled on
                     #if i < (len(pathForTruck)):
                     truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
                     #print [pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]]
-                    
+                    i+=10000000000000
+                """  
                     
                 
-                truckNum += 1
+              
                 
-        
-            
-            ###UPDATE LOCATIONS
-            #truckToBeUsed.location = [startNode, pathForTruck[1],0, self.distance[startNode, pathForTruck[1]]]
-            
+
             
 
     
