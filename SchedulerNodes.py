@@ -1,4 +1,10 @@
 '''
+Created on Apr 27, 2017
+
+@author: Trent
+'''
+
+'''
 Created on Apr 19, 2017
 
 @author: Trent Insull
@@ -42,7 +48,7 @@ class Network(Graph):
         else:
             self.add_node(name)
 
-class Scheduler():
+class SchedulerNodes():
     
     
     """
@@ -111,7 +117,6 @@ class Scheduler():
                     holderDistance = 1000000000
                     currLocation = truck.getCurrentLocation()
                     #if currently on a node (not in the middle of a delivery)
-                    #print truck.isTravelling()
                     if truck.isTravelling() == False:
                         truckToBeUsed = truck
                         #if distance from trucks current location to start node is less than holder distance
@@ -123,41 +128,17 @@ class Scheduler():
 
                 #set truck into motion from its current location to the pickup node
                 currentPoint = truckToBeUsed.getCurrentLocation()
-                if truckToBeUsed.isTravelling() == False and currentPoint[1] == None:
+                if truckToBeUsed.isTravelling() == False and currentPoint[1] == None and pickUpPoint != None:
+                    path1 = self.network.floyd_warshall_get_path(self.distance,self.nextn, currentPoint[0], pickUpPoint)
+                    path2 = self.network.floyd_warshall_get_path(self.distance,self.nextn, order[0], order[1])
                     
-                    startLocation = currentPoint[0]
-                    truckToBeUsed.updateHistory("ROUTE TO PICKUP")
-                    truckToBeUsed.location = [startLocation,pickUpPoint,0,self.distance[(startLocation,pickUpPoint)]]
-                    #truckToBeUsed.queue.push([pickUpPoint, dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
-                    
-                    #create array of nodes on path from start to end
-                    pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
-                    print pathForTruck
-                    
-                    for i in range(0, len(pathForTruck)-1):
-                        truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
-                        i += 3
+                    for i in range(0, len(path2) -2):
+                        truckToBeUsed.queue.push([path2[i],path2[i+1],0,self.distance[path2[i],path2[i+1]]])
                         
-                        
-
                     
-                
-                    truckToBeUsed.travelling = True
-
-                #SAVE FOR LATER WHEN KEEPING TRACK ON EDGE TO EDGE
-                #create array of nodes on path from start to end
-                #pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
-                #print pathForTruck
-                # for each two sets of nodes on the path
-                #truckToBeUsed.queue.push([pathForTruck[0],pathForTruck[len(pathForTruck)-1],0,self.distance[pathForTruck[0],pathForTruck[len(pathForTruck)-1]]])
-                """
-                for i in range(0, len(pathForTruck)-1):
-                    #append that node, the next node, 0 total distance travel, and distance between nodesto be travelled on
-                    #if i < (len(pathForTruck)):
-                    truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
-                    #print [pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]]
-                    i+=10000000000000
-                """  
+                    
+                   
+              
                     
                 
               
