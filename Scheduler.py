@@ -86,7 +86,7 @@ class Scheduler():
             pickUpPoint = order[0]
             #get end node
             dropOffPoint = order[1]
-            if self.distance[(pickUpPoint,dropOffPoint)] == 'infinity' or self.distance[(pickUpPoint,dropOffPoint)] == 0:
+            if self.distance[(pickUpPoint,dropOffPoint)] == 'infinity' or self.distance[(pickUpPoint,dropOffPoint)] == 0 or pickUpPoint == None:
                 pass
             else:
                 #get start node
@@ -123,21 +123,35 @@ class Scheduler():
 
                 #set truck into motion from its current location to the pickup node
                 currentPoint = truckToBeUsed.getCurrentLocation()
-                if truckToBeUsed.isTravelling() == False and currentPoint[1] == None:
+                if truckToBeUsed.isTravelling() == False and (currentPoint[0], pickUpPoint) in self.distance:
                     
                     startLocation = currentPoint[0]
-                    truckToBeUsed.updateHistory("ROUTE TO PICKUP")
-                    truckToBeUsed.location = [startLocation,pickUpPoint,0,self.distance[(startLocation,pickUpPoint)]]
+                    #truckToBeUsed.updateHistory("ROUTE TO PICKUP")
+                    #truckToBeUsed.location = [startLocation,pickUpPoint,0,self.distance[(startLocation,pickUpPoint)]]
                     #truckToBeUsed.queue.push([pickUpPoint, dropOffPoint,0,self.distance[(pickUpPoint,dropOffPoint)]])
                     
                     #create array of nodes on path from start to end
-                    pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
-                    print pathForTruck
+                    #pathForTruck = self.network.floyd_warshall_get_path(self.distance,self.nextn, pickUpPoint, dropOffPoint)
+                    #print pathForTruck
+                    try:
+                        path1 = self.network.floyd_warshall_get_path(self.distance, self.nextn, startLocation, pickUpPoint)
+                    except:
+                        print "nodes not connected"
+                        pass
+                    finalPath1 = self.fixPath(path1, self.distance)
+                    #print path1
+                    #print finalPath1
+                    path2 = self.network.floyd_warshall_get_path(self.distance, self.nextn, pickUpPoint, dropOffPoint)
+                    finalPath2 = self.fixPath(path2, self.distance)
+                    #print finalPath2
                     
-                    for i in range(0, len(pathForTruck)-1):
-                        truckToBeUsed.queue.push([pathForTruck[i],pathForTruck[i+1],0,self.distance[pathForTruck[i],pathForTruck[i+1]]])
-                        i += 3
+                    for i in xrange(len(finalPath1)):
+                        truckToBeUsed.queue.push(finalPath1[i])
+                        #print "pushed"
+                    for i in xrange(len(finalPath2)):
+                        truckToBeUsed.queue.push(finalPath2[i])
                         
+                     
                         
 
                     
@@ -165,7 +179,16 @@ class Scheduler():
 
             
 
-    
+    def fixPath(self, path, distance):
+        fixedPath = []
+        noRepeatPath = []
+        for i in xrange(len(path)):
+            if path[i] not in noRepeatPath:
+                noRepeatPath.append(path[i])
+        for i in xrange(len(noRepeatPath)-1):
+            fixedPath.append([noRepeatPath[i], noRepeatPath[i+1], 0, distance[noRepeatPath[i], noRepeatPath[i+1]]])
+            
+        return fixedPath
     
     
     

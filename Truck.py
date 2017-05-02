@@ -28,28 +28,28 @@ class Truck:
         if self.location[2] < self.location[3]:
             #self.updateHistory('move one unit')
             self.location[2] += 1
-            if self.location[2] == self.location[3]:
-                self.updateHistory(self.location)
+        elif self.location[2] == self.location[3] and self.travelling == True:
+            self.updateHistory(self.location)
                 #if queue is not empty
-                if not self.queue.isEmpty():
+            if not self.queue.isEmpty():
                 #get new data
                     
-                    i,j, distTravelled, distToGo = self.queue.pop()
+                self.location = self.queue.pop()
                     
-                    #set location
-                    self.location = [i,j,distTravelled,distToGo]
+                #set location
+                #self.location = [i,j,distTravelled,distToGo]
+                #self.updateHistory(self.location)
+                #self.updateHistory('DELIVERING PACKAGE')
+                    
+            #else if queue is empty, set truck to rest in its current node
+            elif self.queue.isEmpty():
+                if self.location[1] != None:
                     #self.updateHistory(self.location)
-                    self.updateHistory('DELIVERING PACKAGE')
-                    
-                #else if queue is empty, set truck to rest in its current node
-                elif self.queue.isEmpty():
-                    if self.location[1] != None:
-                        #self.updateHistory(self.location)
                         
-                        self.updateHistory("PACKAGE DELIVERED, STAYING AT NODE")
-                        self.location = [self.location[1], None, 0, 0]
-                        self.travelling = False
-                        self.updateHistory(self.location)
+                    #self.updateHistory("PACKAGE DELIVERED, STAYING AT NODE")
+                    self.location = [self.location[1], None, 0, 0]
+                    self.travelling = False
+                    self.updateHistory(self.location)
         else:
             self.location = self.location
 
