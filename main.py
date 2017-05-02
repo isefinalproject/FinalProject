@@ -28,7 +28,7 @@ Trucks={}
 truckId = 0
 for key in V:
     if random.random()<0.1:
-        r = random.randint(30,40)
+        r = random.randint(5,7)
         for tmp in xrange(r):
             Trucks[truckId] = key 
             truckId=truckId+1
@@ -58,11 +58,12 @@ for orders in xrange(16):
 for t in xrange(12000):
     myScheduler.updateLocationOfTrucks()
 
-     
+myScheduler.finishPygame()
         
 myScheduler.saveTravelHistoryOfAllTrucks()    
         
 myScheduler.printHistoriesOfAllTrucks()   
+
     
     
     

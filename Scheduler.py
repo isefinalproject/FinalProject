@@ -1,12 +1,11 @@
 '''
 Created on Apr 19, 2017
-
 @author: Trent Insull
 '''
 from coinor.gimpy import Graph
 from coinor.gimpy import DIRECTED_GRAPH as DIRECTED_GRAPH
 from Truck import Truck
-from Tkconstants import CURRENT
+
 import pygame
 
 
@@ -53,12 +52,11 @@ class Scheduler():
     """
     def __init__(self, V, E, Trucks):
         pygame.init()
-        self.framerate = 10
-        screenDimension = (800,550) 
+        self.framerate = 15
+        screenDimension = [1200,640] 
         self.screen = pygame.display.set_mode(screenDimension)
-        self.screen.fill((255,255,255))
-        pygame.display.set_caption("Awesome team")
-        background = self.screen.convert()
+        self.screen.fill((0,0,0))
+
         #pygame.draw.rect(self.background, (0,0,0), (0,0, self.screenDimension[0],self.screenDimension[1]))
         self.clock = pygame.time.Clock()
         
@@ -72,30 +70,44 @@ class Scheduler():
         for node in V:
             if V[node][0] <  minx:
                 minx = V[node][0]
-            if V[node][0] > maxx:
+            elif V[node][0] > maxx:
                 maxx = V[node][0]
             if V[node][1] <  miny:
                 miny = V[node][1]
-            if V[node][1] > maxy:
+            elif V[node][1] > maxy:
                 maxy = V[node][1]
-        self.scale = ((screenDimension[0]-15)/(maxx-minx), (screenDimension[1]-15)/(maxy-miny))
+        
+        print maxx, minx
+        print maxy, miny
+        self.scale = [(screenDimension[0]-50)/((maxx-minx)), (screenDimension[1]-300)/((maxy-miny)/2)]
         
         #CREATE NETWROK
         self.network = Graph(type = DIRECTED_GRAPH)
         #for nodes in the list of vertices add the node to the netwrok
         for node in self.V:
             self.network.add_node(node)
-            self.cities[node] = (int((V[node][0]-minx)*self.scale[0])+5, int((V[node][1]-miny)*self.scale[1])+5)
+            
+            self.cities[node] = [int((V[node][0]-minx)*self.scale[0])+5, int((V[node][1]-miny)*self.scale[1])+5]
+            
+            if self.cities[node][0] > 1100:
+                self.cities[node][1] = int((V[node][1]-miny)*1.5*self.scale[1])+5
+            if self.cities[node] == [5,5]:
+                self.cities[node] = [500, 100]
+            if self.cities[node] == [577,685]:
+                self.cities[node] = [577, 400]
+            if self.cities[node] == [518,721]:
+                self.cities[node] = [518, 400]
+            print self.cities[node]
             #self.cities[node] = (int((V[node][0])/10000), int((V[node][1])/10000))
         for node in self.cities:
-            pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 8, 0)
+            pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 1, 0)
             
         #for each edge in edges    
         for edge in self.E:
             #add an edge both ways since graph is directed    
             self.network.add_edge(edge[0],edge[1])
             self.network.set_edge_attr(edge[0],edge[1], 'cost', self.E[edge])
-            pygame.draw.lines(self.screen, (0,0,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
+            pygame.draw.lines(self.screen, (255,255,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
             #add costs to both edges
             self.network.add_edge(edge[1],edge[0])
             self.network.set_edge_attr(edge[1],edge[0], 'cost', self.E[edge])
@@ -229,43 +241,99 @@ class Scheduler():
     
     
     def updateLocationOfTrucks(self):
-        pygame.draw.rect(self.screen, (255,255,255), (0,0, 740,580))
+        pygame.draw.rect(self.screen, (0,0,0), (0,0, 1200,640))
         #for each truck
         for truck in self.Trucks.values():
             #set location to current location
             truck.updateLocation()
+            #self.displayTrucks(truck)
+            
             location = truck.getCurrentLocation()
             if location[1] != None:
                 if self.cities[location[1]][0] < self.cities[location[0]][0]:
                     if self.cities[location[1]][1] < self.cities[location[0]][1]:
-                        truckx = self.cities[location[0]][0] - (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
-                        trucky =  self.cities[location[0]][1] - (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        truckx = self.cities[location[0]][0] - abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky =  self.cities[location[0]][1] - abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
                         pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
-                    else:
-                        truckx = self.cities[location[0]][0] - (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
-                        trucky = self.cities[location[0]][1] + (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                    if self.cities[location[1]][1] > self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] - abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky = self.cities[location[0]][1] + abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
                         pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
                 else:
                     if self.cities[location[1]][1] < self.cities[location[0]][1]:
-                        truckx = self.cities[location[0]][0] + (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
-                        trucky =  self.cities[location[0]][1] - (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        truckx = self.cities[location[0]][0] + abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky =  self.cities[location[0]][1] - abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
                         pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
-                    else:
-                        truckx = self.cities[location[0]][0] + (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
-                        trucky = self.cities[location[0]][1] + (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        
+                    if self.cities[location[1]][1] > self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] + abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky = self.cities[location[0]][1] + abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
                         pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
         for node in self.cities:
-            pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 8, 0)
+            pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 3, 0)
         for edge in self.E:
-            pygame.draw.lines(self.screen, (0,0,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
+            pygame.draw.lines(self.screen, (255,255,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
         
         #for truck in self.Trucks:
-            
-        self.clock.tick(self.framerate)
-        pygame.display.update()
         
-        print 'hi'
+        self.clock.tick(self.framerate)
+        pygame.display.flip()
+        
 
+        
+    
+    def displayTrucks(self, truck):   
+        checkIfDone = False
+        
+        while checkIfDone == False:
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    pygame.quit()
+                    checkIfDone = True
+            
+        
+            location = truck.getCurrentLocation()
+            if location[1] != None:
+                if self.cities[location[1]][0] < self.cities[location[0]][0]:
+                    if self.cities[location[1]][1] < self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] - abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky =  self.cities[location[0]][1] - abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+                    if self.cities[location[1]][1] > self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] - abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky = self.cities[location[0]][1] + abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+                else:
+                    if self.cities[location[1]][1] < self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] + abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky =  self.cities[location[0]][1] - abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+                        
+                    if self.cities[location[1]][1] > self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] + abs((location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0]))
+                        trucky = self.cities[location[0]][1] + abs((location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1]))
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+            for node in self.cities:
+                pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 8, 0)
+            for edge in self.E:
+                pygame.draw.lines(self.screen, (0,0,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
+        
+        
+        
+                self.clock.tick(self.framerate)
+                pygame.display.flip()
+        
+        
+        
+        
+        
+        
+
+    def finishPygame(self):
+        pygame.display.quit()
+        pygame.quit()
+    
+    
     """
     use gimpy provided solutions as stated in class
     """
@@ -288,6 +356,7 @@ class Scheduler():
         pass
     
     def printHistoriesOfAllTrucks(self):
+        pygame.quit()
         totalMilesDriven = 0
         
         for truck in self.Trucks.values():
