@@ -229,12 +229,31 @@ class Scheduler():
     
     
     def updateLocationOfTrucks(self):
+        pygame.draw.rect(self.screen, (255,255,255), (0,0, 740,580))
         #for each truck
         for truck in self.Trucks.values():
             #set location to current location
             truck.updateLocation()
-            #if truck.currentLocation[1] != None:
-                #truckx = (truck.currentLocation[2]/truck.currentLocation[3])*(self.cities[truck.currentLocation[1][0]-self.cities[truck.currentLocation[0][0]])+self.cities[truck.currentLocation[1][0]
+            location = truck.getCurrentLocation()
+            if location[1] != None:
+                if self.cities[location[1]][0] < self.cities[location[0]][0]:
+                    if self.cities[location[1]][1] < self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] - (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
+                        trucky =  self.cities[location[0]][1] - (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+                    else:
+                        truckx = self.cities[location[0]][0] - (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
+                        trucky = self.cities[location[0]][1] + (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+                else:
+                    if self.cities[location[1]][1] < self.cities[location[0]][1]:
+                        truckx = self.cities[location[0]][0] + (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
+                        trucky =  self.cities[location[0]][1] - (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
+                    else:
+                        truckx = self.cities[location[0]][0] + (location[2]/location[3])*(self.cities[location[1]][0]-self.cities[location[0]][0])
+                        trucky = self.cities[location[0]][1] + (location[2]/location[3])*(self.cities[location[1]][1]-self.cities[location[0]][1])
+                        pygame.draw.rect(self.screen, (100,150,200),(truckx,trucky,8,5), 0)
         for node in self.cities:
             pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 8, 0)
         for edge in self.E:
