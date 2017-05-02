@@ -7,6 +7,7 @@ from coinor.gimpy import Graph
 from coinor.gimpy import DIRECTED_GRAPH as DIRECTED_GRAPH
 from Truck import Truck
 from Tkconstants import CURRENT
+import pygame
 
 
 """
@@ -51,22 +52,39 @@ class Scheduler():
     Trucks - key=ID, value=Initial Location of a truck
     """
     def __init__(self, V, E, Trucks):
+        pygame.init()
+        self.framerate = 10
+        screenDimension = (740,580) 
+        self.screen = pygame.display.set_mode(screenDimension)
+        self.screen.fill((255,255,255))
+        pygame.display.set_caption("Awesome team")
+        background = self.screen.convert()
+        self.clock = pygame.time.Clock()
+        
+        self.cities = {}
         self.V =  V
         self.E = E
         #CREATE NETWROK
         self.network = Graph(type = DIRECTED_GRAPH)
         #for nodes in the list of vertices add the node to the netwrok
         for node in self.V:
-            self.network.add_node(node, label = None)
+            self.network.add_node(node)
+            self.cities[node] = (int(V[node][0]*10), int(V[node][1]*10))
+            
+        for node in self.cities:
+            pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 8, 0)
         #for each edge in edges    
         for edge in self.E:
             #add an edge both ways since graph is directed    
             self.network.add_edge(edge[0],edge[1])
-            self.network.add_edge(edge[1],edge[0])
-            #add costs to both edges
             self.network.set_edge_attr(edge[0],edge[1], 'cost', self.E[edge])
+            pygame.draw.lines(self.screen, (0,0,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
+            #add costs to both edges
+            self.network.add_edge(edge[1],edge[0])
             self.network.set_edge_attr(edge[1],edge[0], 'cost', self.E[edge])
-            
+        pygame.display.update()
+        #pygame.display.flip()
+        #self.display()    
             
         self.Trucks = Trucks
         for truck in self.Trucks:
@@ -189,7 +207,7 @@ class Scheduler():
             fixedPath.append([noRepeatPath[i], noRepeatPath[i+1], 0, distance[noRepeatPath[i], noRepeatPath[i+1]]])
             
         return fixedPath
-    
+        
     
     
     
@@ -198,7 +216,13 @@ class Scheduler():
         for truck in self.Trucks.values():
             #set location to current location
             truck.updateLocation()
-    
+        for node in self.cities:
+            pygame.draw.circle(self.screen, (50,100,150), self.cities[node], 8, 0)
+        for edge in self.E:
+            pygame.draw.lines(self.screen, (0,0,0), False, [self.cities[edge[0]], self.cities[edge[1]]], 1)
+        self.clock.tick(self.framerate)
+        pygame.display.update()
+        print 'hi'
 
     """
     use gimpy provided solutions as stated in class
