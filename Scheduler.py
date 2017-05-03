@@ -340,7 +340,7 @@ class Scheduler():
     which will save the travel history of each truck (also those which you haven't used)
     """
     def saveTravelHistoryOfAllTrucks(self):
-        # for each truck
+        #for each truck
         for truck in self.Trucks.values():
             #get its travel history
             truckHistory = truck.getTotalTravelHistory()

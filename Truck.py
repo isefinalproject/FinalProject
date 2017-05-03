@@ -10,6 +10,7 @@ class Truck:
     def __init__(self, _id, initialLocation):
         self.id = _id
         self.location = [initialLocation, None, 0,0]
+        #set to not travelling initially
         self.travelling = False
         #set initial history array for each truck
         self.history = [[initialLocation, None, 0,0]]
@@ -24,16 +25,17 @@ class Truck:
     together with the information how far on this edge the truck is.
     """    
     def updateLocation(self):
-        #if truck is on an arc, increase how far it has gone
+        #if truck is on an arc currently dirivng, increase how far it has gone
         if self.location[2] < self.location[3]:
             #self.updateHistory('move one unit')
             self.location[2] += 1
+        #else if it is still traveling but currently at a node
         elif self.location[2] == self.location[3] and self.travelling == True:
+            #update history saying it got to node
             self.updateHistory(self.location)
-                #if queue is not empty
+            #if queue is not empty
             if not self.queue.isEmpty():
-                #get new data
-                    
+                #get new data   
                 self.location = self.queue.pop()
                     
                 #set location
@@ -48,7 +50,9 @@ class Truck:
                         
                     #self.updateHistory("PACKAGE DELIVERED, STAYING AT NODE")
                     self.location = [self.location[1], None, 0, 0]
+                    #set to not traveling
                     self.travelling = False
+                    #update history
                     self.updateHistory(self.location)
         else:
             self.location = self.location
