@@ -55,7 +55,7 @@ for orders in xrange(16):
     for t in xrange(30):
         myScheduler.updateLocationOfTrucks()
 
-for t in xrange(12000):
+for t in xrange(120):
     myScheduler.updateLocationOfTrucks()
 
 myScheduler.finishPygame()
