@@ -48,7 +48,7 @@ class Truck:
                 if self.location[1] != None:
                     #self.updateHistory(self.location)
                         
-                    #self.updateHistory("PACKAGE DELIVERED, STAYING AT NODE")
+                    self.updateHistory("PACKAGE DELIVERED, STAYING AT NODE")
                     self.location = [self.location[1], None, 0, 0]
                     #set to not traveling
                     self.travelling = False

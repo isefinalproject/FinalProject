@@ -216,7 +216,7 @@ class Scheduler():
                     finalPath2 = self.fixPath(path2, self.distance)
                     #print finalPath2
                     
-                    
+                    truckToBeUsed.updateHistory("ROUTE TO PICKUP")
                     #For the paths, push sequences to queues
                     for i in xrange(len(finalPath1)):
                         truckToBeUsed.queue.push(finalPath1[i])
@@ -345,7 +345,7 @@ class Scheduler():
             #get its travel history
             truckHistory = truck.getTotalTravelHistory()
             #write it to its log file
-            f = open('history_'+str(truck)+'.log', 'w')
+            f = open('history_'+str(truck.id)+'.log.txt', 'w')
             f.write(str(truckHistory))
             f.close()
         
@@ -360,5 +360,7 @@ class Scheduler():
             print truck.getTotalTravelHistory()
             #sum all minutes driven
             for i in truck.getTotalTravelHistory():
-                totalMinutesDriven += i[3]
+                #check to make sure not a string instance
+                if not isinstance(i, basestring):
+                    totalMinutesDriven += i[3]
         print "Your fleet drove a total of " + str(totalMinutesDriven) + " minutes"
