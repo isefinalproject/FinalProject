@@ -9,13 +9,7 @@ from Truck import Truck
 import pygame
 
 
-"""
-TO DO:
-FILTER PATH LIST TO INCLUDE EACH NODE ONCE INSTEAD OF 3 TIMES
-DOUBLE CHECK TRUCKS ARE GETTING ROUTED CORRECTLY
-VISUALIZE TRUCKS MOVING
-IMPLEMENT HEURISTIC?
-"""
+
 class Network(Graph):
     
     def __init__(self):
